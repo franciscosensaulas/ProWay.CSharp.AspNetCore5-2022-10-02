@@ -32,14 +32,14 @@
 
     <div id="div-campo-mesma-pagina" class="margin-bottom-10">
         <input type="radio" id="campo-mesma-pagina" name="pagina" 
-            value="@PaginaDirecionamento.Mesma"
+            value="@((int)PaginaDirecionamento.Mesma)"
             checked="checked" />
         <label for="campo-mesma-pagina">Mesma Página</label>
     </div>
 
     <div id="div-campo-outra-pagina" class="margin-bottom-10">
-        <input type="radio" id="campo-outra-pagina" name="pagina" 
-            value="@PaginaDirecionamento.Outra" />
+        <input type="radio" id="campo-outra-pagina" name="pagina"
+               value="@((int)PaginaDirecionamento.Outra)" />
         <label for="campo-outra-pagina">Outra Página</label>
     </div>
 
