@@ -21,9 +21,10 @@ namespace Proway.Projeto00.Controllers
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#server_error_responses
         //200 - Ok
         //201 - Created
+        //204 - No Content
         //400 - Bad Request 
-        //422 - Unprocessable Entity(quando ocorre erro de validação)
         //404 - Not Found
+        //422 - Unprocessable Entity(quando ocorre erro de validação)
         //500 - Internal Server Error
 
         // Atributo
