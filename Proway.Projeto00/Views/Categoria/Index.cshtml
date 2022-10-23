@@ -1,5 +1,19 @@
-﻿@using Proway.Projeto00.Entities
-@model List<Categoria>
+﻿@using Proway.Projeto00.Controllers
+@model List<CategoriaIndexViewModel>
+
+@if(TempData[CategoriaController.KeyMessageSuccess] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData[CategoriaController.KeyMessageSuccess]
+    </div>
+}
+@if (TempData[CategoriaController.KeyMessageError] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData[CategoriaController.KeyMessageError]
+    </div>
+}
+
 <div class="row">
     <div class="col-12 mb-3">
         <a asp-controller="Categoria" asp-action="Cadastrar" 

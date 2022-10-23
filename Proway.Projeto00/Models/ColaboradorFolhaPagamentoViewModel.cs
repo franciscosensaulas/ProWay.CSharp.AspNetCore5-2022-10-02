@@ -1,5 +1,4 @@
-﻿using Proway.Projeto00.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Proway.Projeto00.Models
 {

@@ -1,18 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Proway.Projeto00.Database;
-using Proway.Projeto00.Entities;
-using Proway.Projeto00.Models.Categorias;
+using Service.Services.Categorias;
+using Service.ViewModels.Categorias;
 
 namespace Proway.Projeto00.Controllers
 {
     [Route("categorias")]
     public class CategoriaController : Controller
     {
-        private readonly ProjetoContext _projetoContext;
+        public const string KeyMessageSuccess = "MensagemSucesso";
+        public const string KeyMessageError = "MensagemErro";
 
-        public CategoriaController(ProjetoContext projetoContext)
+        private readonly ICategoriaService _categoriaService;
+
+        public CategoriaController(ICategoriaService categoriaService)
         {
-            _projetoContext = projetoContext;
+            _categoriaService = categoriaService;
         }
 
         [HttpGet]
@@ -20,10 +22,10 @@ namespace Proway.Projeto00.Controllers
         {
             // Select no banco de dados buscando
             // da tabela de categorias todos os registros
-            var categorias = _projetoContext.Set<Categoria>().ToList();
+            var categoriaIndexViewModels = _categoriaService.ObterTodos();
 
 
-            return View("Index", categorias);
+            return View("Index", categoriaIndexViewModels);
         }
 
         [HttpGet("cadastrar")]
@@ -38,18 +40,11 @@ namespace Proway.Projeto00.Controllers
         public IActionResult Cadastrar(CategoriaCadastrarViewModel viewModel)
         {
             if (!ModelState.IsValid)
-            {
                 return View(viewModel);
-            }
 
-            // Persistir a categoria na tabela de categorias
-            var categoria = new Categoria
-            {
-                Nome = viewModel.Nome.Trim()
-            };
+            var _ = _categoriaService.Cadastrar(viewModel);
 
-            _projetoContext.Set<Categoria>().Add(categoria);
-            _projetoContext.SaveChanges();
+            TempData[KeyMessageSuccess] = "Categoria Cadastrada com sucesso";
 
             return RedirectToAction("ObterTodos");
         }
@@ -57,16 +52,9 @@ namespace Proway.Projeto00.Controllers
         [HttpGet("apagar/{id}")]
         public IActionResult Apagar(int id)
         {
-            var categoria = _projetoContext
-                .Set<Categoria>()
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-            
-            if(categoria != null)
-            {
-                _projetoContext.Set<Categoria>().Remove(categoria);
-                _projetoContext.SaveChanges();
-            }
+            _categoriaService.Apagar(id);
+
+            TempData[KeyMessageError] = "Categoria apagada com sucesso";
 
             return RedirectToAction("ObterTodos");
         }
@@ -74,11 +62,9 @@ namespace Proway.Projeto00.Controllers
         [HttpGet("editar/{id}")]
         public IActionResult Editar(int id)
         {
-            var categoriaExistente = _projetoContext
-                .Set<Categoria>()
-                .FirstOrDefault(x => x.Id == id);
+            var categoriaIndexViewModel = _categoriaService.ObterPorId(id);
 
-            if(categoriaExistente == null)
+            if (categoriaIndexViewModel == null)
             {
                 return RedirectToAction("ObterTodos");
             }
@@ -86,7 +72,7 @@ namespace Proway.Projeto00.Controllers
             var categoriaEditarViewModel = new CategoriaEditarViewModel
             {
                 Id = id,
-                Nome = categoriaExistente.Nome
+                Nome = categoriaIndexViewModel.Nome
             };
 
             return View(categoriaEditarViewModel);
@@ -95,17 +81,13 @@ namespace Proway.Projeto00.Controllers
         [HttpPost("editar/{id}")]
         public IActionResult Editar(int id, CategoriaEditarViewModel categoriaEditarViewModel)
         {
-            var categoriaExistente = _projetoContext
-                .Set<Categoria>()
-                .FirstOrDefault(x => x.Id == id);
+            var categoriaExistente = _categoriaService.ObterPorId(id);
 
             if (categoriaExistente == null)
                 return RedirectToAction("ObterTodos");
 
-            categoriaExistente.Nome = categoriaEditarViewModel.Nome.Trim();
-
-            _projetoContext.Set<Categoria>().Update(categoriaExistente);
-            _projetoContext.SaveChanges();
+            categoriaEditarViewModel.Id = id;
+            _categoriaService.Alterar(categoriaEditarViewModel);
 
             return RedirectToAction("ObterTodos");
         }
